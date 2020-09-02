@@ -5,20 +5,25 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.udemy.wallet.entity.User;
+import com.udemy.wallet.util.Bcrypt;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class UserDto {
 
 	private Long id;
 
+	@NotNull
 	@Email(message = "Email inválido")
 	private String email;
 
+	@NotNull
 	@Length(min = 3, max = 50, message = "Nome deve conter entre 3 e 50 caracteres")
 	private String name;
 
@@ -32,7 +37,7 @@ public class UserDto {
 		u.setId(this.id);
 		u.setEmail(this.email);
 		u.setName(this.name);
-		u.setPassword(this.password);
+		u.setPassword(Bcrypt.getHash(this.password));
 
 		return u;
 	}
@@ -41,7 +46,6 @@ public class UserDto {
 		this.email = u.getEmail();
 		this.id = u.getId();
 		this.name = u.getName();
-		this.password = u.getPassword();
 	}
 
 }
